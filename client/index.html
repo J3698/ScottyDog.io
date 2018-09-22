@@ -29,15 +29,39 @@
         
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
+        var id;
+        var countDown = 160000000000;
         
         window.onload = function() {
-            alert("How to Play \n Your scottie dog represents a CMU student! Collect enough textbooks to study before your next exam or you lose. You can collect USBs with troves of pdfs if you're feeling lucky but beware viruses that make you instantly lose!")
-            var tempid = prompt("Name your character");
-            //socket.emit('checkName', tempid);
+           
+            alert("How to Play \nYour scottie dog represents a CMU student! Collect enough textbooks to study before your next exam or you lose. You can collect USBs with troves of pdfs if you're feeling lucky but beware usbs dropped by other players with viruses that make you instantly lose! \nUse the arrow keys to switch directions, space bar to drop an infected usb.")
+            //Name
             
+            var validName = false;
+            while (!validName)
+            {
+                var tempid = prompt("Name your character");
+                socket.emit('checkName', tempid);
+                socket.on('nameMatch', function(match)
+                {
+                if(match == 1)  
+                {
+                  tempid = prompt("Please rename your character"); 
+                }
+                  else if(matc)
+            });
+            id = tempid;
+            
+            socket.on('death', function(Id)
+            {
+                if (id == Id)
+                {
+                    ctx.drawImage(deathImg, 0,0,375,250);
+                    alert("You've died! Please retake C@CM, and then refresh the page to play again");
+                    socket.disconnect;
+                }
+            });
 
-            //socket.on('confirmName', function(tempid){
-            var id = tempid;
             socket.on('update', function(thing) {
             drawScreen(thing[0], thing[1], thing[2]);
             });
@@ -74,20 +98,9 @@
             console.log(event.keyCode);
         });
 
-        socket.on('death', Id)
-        {
-            if (id == Id)
-            {
-                socket.disconnect;
-                ctx.drawImage(deathImg, 0,0,873,519);
-                alert("You've died! Please retake C@CM, and then refresh the page to play again");
-            }
-        }
-
         //countdown
-        var countDown = 15;
-        while(countdown >= 0){
-        window.setTimeout(myTimer, 1000)
+        
+        setTimeout(myTimer, 1000)
         function myTimer(){
             countDown--;
           }
@@ -202,8 +215,8 @@
                 ctx.font = "10px Arial";
                 ctx.fillStyle = "#EEEEEE";
                 ctx.fillText('SCOREBOARD', 300, 10);
-                //cdown
-                ctx.fillText("Time remaining until exam: " + countDown, 5, 240);
+                //countdown
+                ctx.fillText("Time remaining until exam: " + countDown % 16, 5, 240);
 
                 var onBoard = false;
                 
@@ -232,7 +245,7 @@
                 }
                 
             }
-        };
+        
         </script>
     </body>
 </html>

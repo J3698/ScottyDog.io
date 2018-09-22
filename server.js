@@ -22,7 +22,7 @@ var cameraHeight = 250;
 
 function Character(sock, id) {
   var char = this;
-  console.log("Character created with id ");
+  console.log("Character created with id " + id);
   this.posx = ((width) * Math.random());
   this.posy = ((height) * Math.random());
   this.dir = 0;
@@ -50,7 +50,11 @@ function Character(sock, id) {
   
     for (var i = players.length - 1; i >= 0; i--)
     {
-      if (sock == map.get(players[i].id)[1])
+      if (map.get(players[i].id) == undefined)
+      {
+        console.log("Tried to delete " + players[i].id + " but they didn't exist.");
+      }
+      else if (sock == map.get(players[i].id)[1])
       {
         console.log("Player with id:" + id + " was disconnected");
         map.delete(players[i].id)
@@ -115,11 +119,15 @@ io.on('connection', function(socket) {
     players.push(newGuy);
   });
   
-  /*socket.on('checkName', function(tempid){
+  socket.on('checkName', function(tempid){
     for (var l = 0; l < players.length; l++){
       if (tempid == players[l].id){
-        tempid = prompt("That name is taken. Please pick another one.");
-        l = 0;
+        io.emit('nameMatch', 1);
+        l = -1;
+      }
+      if(l == -1)
+      {
+        io.emit('nameMatch', 0);
       }
     }
     socket.emit('confirmName', tempid)
