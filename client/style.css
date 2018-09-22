@@ -1,0 +1,31 @@
+#scream {
+    display: none;
+    image-rendering: pixelated
+}
+
+#scary {
+    display: none;
+    image-rendering: pixelated
+}
+
+#enemyL {
+    display: none;
+    image-rendering: pixelated
+}
+
+#enemyR {
+    display: none;
+    image-rendering: pixelated;
+}
+
+#book {
+    display: none;
+    image-rendering: pixelated;
+}
+    
+#myCanvas {
+    width: 100vh;
+    height: 66vh;
+    border:20px solid #d3d3d3;
+    background-color: solid #d3d3d3;
+}
