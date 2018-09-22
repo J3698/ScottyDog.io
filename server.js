@@ -27,6 +27,7 @@ function Character(sock, id) {
   this.posy = ((height) * Math.random());
   this.dir = 0;
   this.id = id;
+  this.time = 16;
   this.score = 0;
   this.lastShot = 0;
   
@@ -119,19 +120,33 @@ io.on('connection', function(socket) {
     players.push(newGuy);
   });
   
+  socket.on('fail', function(id){
+    killPlayer(id);
+  });
+  
   socket.on('checkName', function(tempid){
-    for (var l = 0; l < players.length; l++){
-      if (tempid == players[l].id){
-        io.emit('nameMatch', 1);
-        l = -1;
-      }
-      if(l == -1)
-      {
-        io.emit('nameMatch', 0);
-      }
+    console.log("Checking in the server if " + tempid + " is a valid ID.");
+    if (players.length == 0)
+    {
+      console.log("Length was at 0, emitting a positive nameMatch");
+      socket.emit('nameMatch', 0);
     }
-    socket.emit('confirmName', tempid)
-  });*/
+    else
+    {
+      var t = true;
+      for (var l = 0; l < players.length; l++){
+        if (tempid == players[l].id){
+          socket.emit('nameMatch', 1);
+          t = false;
+        }
+      }
+      if(t)
+        {
+          console.log("Emitting a positive nameMatch");
+          socket.emit('nameMatch', 0);
+        }
+    }
+  });
 });
 
 function killPlayer(Id)
@@ -256,6 +271,7 @@ function isCollide(){
         delete books[n];
         books.splice(n, 1);
         console.log(players[m].score);
+        map.get(players[m].id)[1].emit('pass', 15);
       }
     }
 
@@ -266,7 +282,8 @@ function isCollide(){
           deathNote.push(players[m].id);
         }
         else{
-          players[m].score += 3
+          players[m].score += 3;
+          map.get(players[m].id)[1].emit('pass', 25);
         }
         delete usbs[o];
         usbs.splice(o, 1);

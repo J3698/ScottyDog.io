@@ -30,27 +30,51 @@
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
         var id;
-        var countDown = 160000000000;
+        var countDown = 16;
         
+        //countdown
+        
+        window.setInterval(myTimer, 1000);
+        function myTimer(){
+            countDown--;
+            if (countDown == 0){
+                    socket.emit('fail', id)
+            }
+          }
+
+        
+    
         window.onload = function() {
-           
+            alert("Welcome to Scotty.io");
             alert("How to Play \nYour scottie dog represents a CMU student! Collect enough textbooks to study before your next exam or you lose. You can collect USBs with troves of pdfs if you're feeling lucky but beware usbs dropped by other players with viruses that make you instantly lose! \nUse the arrow keys to switch directions, space bar to drop an infected usb.")
             //Name
             
-            var validName = false;
-            while (!validName)
+            
+            
+            function getValidName()
             {
-                var tempid = prompt("Name your character");
+                var tempid = prompt("Name your character:");
                 socket.emit('checkName', tempid);
-                socket.on('nameMatch', function(match)
-                {
-                if(match == 1)  
-                {
-                  tempid = prompt("Please rename your character"); 
-                }
-                  else if(matc)
-            });
-            id = tempid;
+                socket.on('pass', function(time){
+                    countDown = time;
+                });
+
+                socket.on('nameMatch', function(match) {
+                    if (match == 1)
+                    {
+                        alert(tempid + " has already been taken, please try another name.");
+                        getValidName();
+                    }
+                    else
+                    {
+                        alert("Valid ID found, you are now " + tempid);
+                        id = tempid;
+                        socket.emit('getId', id );
+                    }
+                })
+            }
+    
+            getValidName();
             
             socket.on('death', function(Id)
             {
@@ -66,7 +90,7 @@
             drawScreen(thing[0], thing[1], thing[2]);
             });
         
-            socket.emit('getId', id );
+            
             //});
             
         
@@ -98,16 +122,11 @@
             console.log(event.keyCode);
         });
 
-        //countdown
         
-        setTimeout(myTimer, 1000)
-        function myTimer(){
-            countDown--;
-          }
-        }
 
             function drawScreen(players, books, usbs)
             {
+                
                 
                 var int = -1;
                 for (var i = 0; i < players.length; i++)
@@ -216,7 +235,7 @@
                 ctx.fillStyle = "#EEEEEE";
                 ctx.fillText('SCOREBOARD', 300, 10);
                 //countdown
-                ctx.fillText("Time remaining until exam: " + countDown % 16, 5, 240);
+                ctx.fillText("Time remaining until exam: " + countDown, 5, 240);
 
                 var onBoard = false;
                 
@@ -244,7 +263,7 @@
                     ctx.fillText((int + 1) + ": " + players[int].id + '   ' + players[int].score, 300, y + 80);
                 }
                 
-            }
+            }}
         
         </script>
     </body>
