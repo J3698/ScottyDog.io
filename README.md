@@ -1,15 +1,1 @@
-         ___        ______     ____ _                 _  ___  
-        / \ \      / / ___|   / ___| | ___  _   _  __| |/ _ \ 
-       / _ \ \ /\ / /\___ \  | |   | |/ _ \| | | |/ _` | (_) |
-      / ___ \ V  V /  ___) | | |___| | (_) | |_| | (_| |\__, |
-     /_/   \_\_/\_/  |____/   \____|_|\___/ \__,_|\__,_|  /_/ 
- ----------------------------------------------------------------- 
-
-
-Hi there! Welcome to AWS Cloud9!
-
-To get started, create some files, play with the terminal,
-or visit https://docs.aws.amazon.com/console/cloud9/ for our documentation.
-
-Happy coding!
-
+We wanted to create an ".io" type game that involves multiple players and a leaderboard to keep rank. As we were brainstorming ideas for our game, we were reflecting on our few weeks spent here at CMU and the week of tests ahead. As we saw more and more people around us worrying about them, we wanted to remind our peers not to over obsess over them. We thought the best way to convey a message would be through a mix of comedy and a simple yet addicting game mechanic that can draw people in.
