@@ -1,3 +1,11 @@
+#plaid {
+    display: none;
+}
+
+#usb {
+    display: none;
+}
+
 #scream {
     display: none;
     image-rendering: pixelated
@@ -21,6 +29,10 @@
 #book {
     display: none;
     image-rendering: pixelated;
+}
+
+#comp {
+    display: none;
 }
     
 #myCanvas {

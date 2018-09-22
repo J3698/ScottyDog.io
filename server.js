@@ -38,9 +38,10 @@ function Character(sock, id) {
   sock.on('move', this.onMove);
   
   sock.on('shoot', function() {
-    if (Date.now() - lastShot > 2) {
-      var lastShot = Date.now();
-      usbs.push(new USB(xpos, ypos, dir));
+    console.log(Date.now() - char.lastShot);
+    if (Date.now() - char.lastShot > 2) {
+      char.lastShot = Date.now();
+      usbs.push(new USB(char.posx, char.posy, char.dir, true));
     }
   });
   
@@ -65,21 +66,22 @@ function Book() {
   this.posy = ((height) * Math.random());
   }
 
-function USB(x, y, dir) {
+function USB(x, y, dir, evil) {
   this.posx = x;
   this.posy = y;
+  this.evil = evil;
   switch (dir) {
     case 1:
-      xpos -= 20;
+      this.posx += 20;
       break;
     case 2:
-      ypos -= 20;
+      this.posy += 20;
       break;
     case 3:
-      xpos += 20;
+      this.posx -= 20;
       break;
     case 4:
-      ypos += 20;
+      this.posy -= 20;
       break;
   }
 }
@@ -93,7 +95,6 @@ function getNearby(p, players) {
       continue;
     } else {
       nearby.push(players[o]);
-//      console.log(o);
     }
   }
   return nearby;
@@ -114,14 +115,32 @@ io.on('connection', function(socket) {
     players.push(newGuy);
   });
   
-  socket.on('checkName', function(tempid){
+  /*socket.on('checkName', function(tempid){
     for (var l = 0; l < players.length; l++){
       if (tempid == players[l].id){
-        
+        tempid = prompt("That name is taken. Please pick another one.");
+        l = 0;
       }
     }
-  });
+    socket.emit('confirmName', tempid)
+  });*/
 });
+
+function killPlayer(Id)
+{
+  console.log("Killing player " + Id + ", list size is " + players.length);
+  for (var i = players.length - 1; i >= 0; i--)
+  {
+    if (players[i].id == Id)
+    {
+      console.log("A player was deleted.");
+      players.splice(i,i);
+    }
+  }
+  map.delete(Id);
+  io.emit('death', Id);
+  console.log("Player killed, final list size is " + players.length);
+}
 
 
 
@@ -166,6 +185,41 @@ setInterval(function() {
     var currChar = map.get(key)[0];
     val[1].emit('update', [getNearby(currChar, players), books, usbs])
   });
+  
+  //Sort player list
+  //Please dear god let this work
+  /*
+  isSorted = false;
+  while (!isSorted)
+  {
+    isSorted = true;
+    for (var i = 0; i < players.length - 1; i++)
+    {
+      if (players[i].score < players[i + 1])
+      {
+        isSorted = false;
+        var temp = players[i];
+        players[i] = players[i+1];
+        players[i+1] = temp;
+      }
+    }
+  }
+  */
+  function compare(a, b)
+  {
+    let comparison = 0;
+    if (a.score > b.score)
+    {
+      comparison = -1;
+    }
+    if (a.score < b.score)
+    {
+      comparison = 1;
+    }
+    return comparison;
+  }
+  
+  players.sort(compare)
 }, 20);
 
 setInterval(function() {
@@ -176,7 +230,17 @@ setInterval(function() {
 
 }, 10000);
 
+setInterval(function() {
+  for (var z = 0; z < players.length / 3; z++){
+      var newUSB = new USB((width) * Math.random(), (height) * Math.random(), 1, false)
+      usbs.push(newUSB);
+  }
+
+}, 5000);
+
 function isCollide(){
+  var deathNote = []
+
   for (var m = 0; m < players.length; m++){
     for (var n = 0; n < books.length; n++){
       if (Math.abs(players[m].posx - books[n].posx) <= 8 && Math.abs(players[m].posy - books[n].posy) <= 8){
@@ -186,6 +250,24 @@ function isCollide(){
         console.log(players[m].score);
       }
     }
+
+    for (var o = 0; o < usbs.length; o++){
+      
+      if (Math.abs(players[m].posx - usbs[o].posx) <= 8 && Math.abs(players[m].posy - usbs[o].posy) <= 8){
+        if (usbs[o].evil == true){
+          deathNote.push(players[m].id);
+        }
+        else{
+          players[m].score += 3
+        }
+        delete usbs[o];
+        usbs.splice(o, 1);
+      }
+    }
+  }
+
+  for (i in deathNote) {
+      killPlayer(deathNote[i]);
   }
 }
 

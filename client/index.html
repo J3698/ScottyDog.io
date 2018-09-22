@@ -10,7 +10,8 @@
     <img id="enemyR" width="16" height="16" src=".\images\White-Scotty-R.png" alt="The Scream?">
     <img id="usb" width="16" height="16" src=".\images\Flash-Drive.png" alt="The Scream?">
     <img id="book" width="16" height="16" src=".\images\Plaid-Book.png" alt="The Scream?!">
-    
+    <img id="plaid" width="200" height="200" src=".\images\Plaid.jpeg" alt="The Scream?!">
+    <img id="comp" width="873" height="519" src=".\images\Comp.png" alt="The horror!">
     
     <canvas id="myCanvas" width="375" height="250" style="width: 100vh; height: 66vh; border:20px solid #d3d3d3; background-color: solid #d3d3d3;">
     </canvas>
@@ -22,22 +23,28 @@
         var Rimg = document.getElementById("scary");
         var en = document.getElementById("enemyL");
         var bimg = document.getElementById("book");
+        var uimg = document.getElementById("usb");
+        var pimg = document.getElementById("plaid");
+        var deathImg = document.getElementById("comp");
         
         var c = document.getElementById("myCanvas");
         var ctx = c.getContext("2d");
         
         window.onload = function() {
+            alert("How to Play \n Your scottie dog represents a CMU student! Collect enough textbooks to study before your next exam or you lose. You can collect USBs with troves of pdfs if you're feeling lucky but beware viruses that make you instantly lose!")
+            var tempid = prompt("Name your character");
+            //socket.emit('checkName', tempid);
             
-        var tempid = prompt("Name your character");
-        socket.emit('checkName', tempid)
-        var id = tempid;
+
+            //socket.on('confirmName', function(tempid){
+            var id = tempid;
+            socket.on('update', function(thing) {
+            drawScreen(thing[0], thing[1], thing[2]);
+            });
         
+            socket.emit('getId', id );
+            //});
             
-        socket.on('update', function(thing) {
-            drawScreen(thing[0], thing[1]);
-        });
-        
-        socket.emit('getId', id );
         
 
         document.addEventListener('keydown', function(event) {
@@ -62,15 +69,33 @@
             else if(event.keyCode == 32)
             {  
                 //Shoot USB
-                socket.emit('shoot');
+                socket.emit('shoot', '');
             }
             console.log(event.keyCode);
         });
-        
-        
-        
-            function drawScreen(players, books)
+
+        socket.on('death', Id)
+        {
+            if (id == Id)
             {
+                socket.disconnect;
+                ctx.drawImage(deathImg, 0,0,873,519);
+                alert("You've died! Please retake C@CM, and then refresh the page to play again");
+            }
+        }
+
+        //countdown
+        var countDown = 15;
+        while(countdown >= 0){
+        window.setTimeout(myTimer, 1000)
+        function myTimer(){
+            countDown--;
+          }
+        }
+
+            function drawScreen(players, books, usbs)
+            {
+                
                 var int = -1;
                 for (var i = 0; i < players.length; i++)
                 {
@@ -83,10 +108,60 @@
                 var xmod = players[int].posx;
                 var ymod = players[int].posy;
                 
-                
+                var x0 = xmod - 375 / 2;
+                var y0 = ymod - 250 / 2;
+                var x1 = xmod + 375 / 2;
+                var y1 = ymod + 250 / 2;
+
                 ctx.clearRect(0,0,myCanvas.width,myCanvas.height);
-                ctx.fillStyle = 'rgb(100,100,100, 0.9)';
+                
+                //375 250
+                for (var x = Math.floor(x0 / 200); x <= Math.floor(x1 / 200); x += 1) {
+                    for (var y = Math.floor(y0 / 200); y <= Math.floor(y1 / 200); y += 1) {
+                        ctx.drawImage(pimg, 200 * x - xmod + myCanvas.width / 2, 200 * y - ymod + myCanvas.height / 2, 200, 200);
+                    }
+                }
+                
+                 ctx.fillStyle = 'rgb(100,100,100, 0.75)';
                 ctx.fillRect(0,0,myCanvas.width, myCanvas.height);
+                
+                ctx.fillStyle = 'rgba(25, 25, 25, 0.85)';
+                
+                if (xmod - 375 / 2 < 0) {
+                    //ctx.beginPath();
+                    //ctx.moveTo(-xmod + myCanvas.width / 2, 0);
+                    //ctx.lineTo(-xmod + myCanvas.width / 2, 250);
+                    //ctx.stroke();
+                    
+                    ctx.fillRect(-xmod + myCanvas.width / 2 - 375, 0, 375, 250);
+                } else if (xmod + 375 > 1000) {
+                    //ctx.beginPath();
+                    //ctx.moveTo(1000 - xmod + myCanvas.width / 2, 0);
+                    //ctx.lineTo(1000 - xmod + myCanvas.width / 2, 250);
+                    
+                    ctx.fillRect(1000 - xmod + myCanvas.width / 2, 0, 375, 250);
+                    //ctx.fillRect();
+                    //ctx.stroke();
+                }
+
+                if (ymod - 250 / 2 < 0) {
+                    //ctx.moveTo(0, -ymod + myCanvas.height / 2);
+                    //ctx.lineTo(375, -ymod + myCanvas.height / 2);
+                    
+                    ctx.fillRect(0, -ymod + myCanvas.height / 2-250, 375, 250);
+                    //ctx.stroke();
+                } else if (ymod + 250 > 500) {
+    //                ctx.beginPath();
+//                    ctx.moveTo(0, 500 - ymod + myCanvas.height / 2);
+  //                  ctx.lineTo(375, 500 - ymod + myCanvas.height / 2);
+                    
+                    ctx.fillRect(0, 500 - ymod + myCanvas.height / 2, 375, 250);
+      //              ctx.closePath();
+        //            ctx.stroke();
+                }
+
+               
+                
                 for (var i = 0; i < players.length; i++) {
                     
                     var newX = (players[i].posx - xmod + myCanvas.width/2);
@@ -100,7 +175,6 @@
                         en = document.getElementById("enemyR");
                     }
                     if (id == players[i].id){
-                        console.log(players[i].posx, players[i].posy);
                         ctx.drawImage(img, newX, newY, 16, 16);
                         ctx.font = "10px Arial";
                         ctx.fillStyle = "#EEEEEE";
@@ -118,13 +192,19 @@
                 for (var j = 0; j < books.length; j++){
                     ctx.drawImage(bimg, books[j].posx - xmod + myCanvas.width/2, books[j].posy - ymod + myCanvas.height/2, 16, 16);
                 }
-                
+
+                for (var j = 0; j < usbs.length; j++){
+                    ctx.drawImage(uimg, usbs[j].posx - xmod + myCanvas.width/2, usbs[j].posy - ymod + myCanvas.height/2, 16, 16);
+                }
+
                 //Scoreboard
                 var y = 20;
                 ctx.font = "10px Arial";
                 ctx.fillStyle = "#EEEEEE";
                 ctx.fillText('SCOREBOARD', 300, 10);
-                
+                //cdown
+                ctx.fillText("Time remaining until exam: " + countDown, 5, 240);
+
                 var onBoard = false;
                 
                 for (var i = 0; i < 6; i++) {
@@ -133,22 +213,24 @@
                         if (i == int)
                         {
                             onBoard = true;
-                            ctx.fillStyle = 'blue';
-                            ctx.fill(players[i].id + '   ' + players[i].score, 300, y+ 10*i);
+                            ctx.fillStyle = '#0000FF';
+                            ctx.fillText((i + 1) + ": " + players[i].id + '   ' + players[i].score, 300, y+ 10*i);
                         }
                         else
                         {
-                            ctx.fillStyle = "#EEEEE";
-                            ctx.fillText(players[i].id + '   ' + players[i].score, 300, y + 10*i);
+                            ctx.fillStyle = "#EEEEEE";
+                            ctx.fillText((i + 1) + ": " + players[i].id + '   ' + players[i].score, 300, y + 10*i);
                         }
                     }
                 }
                 
                 if (!onBoard)
                 {
-                    ctx.fillStyle = 'blue';
-                    ctx.fill(players[int].id + '   ' + players[int].score, 300, y + 60);
+                    ctx.fillStyle = '#0000FF';
+                    ctx.fillText("Your Score:", 300, y+70);
+                    ctx.fillText((int + 1) + ": " + players[int].id + '   ' + players[int].score, 300, y + 80);
                 }
+                
             }
         };
         </script>
