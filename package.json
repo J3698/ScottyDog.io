@@ -23,7 +23,7 @@
     "url": "https://github.com/J3698/backup/issues"
   },
   "engines": {
-    "node": "6.14.4"
+    "node": "10.11.0"
   },
   "homepage": "https://github.com/J3698/backup#readme"
 }
