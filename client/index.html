@@ -56,7 +56,14 @@
                 var tempid = prompt("Name your character:");
                 socket.emit('checkName', tempid);
                 socket.on('pass', function(time){
-                    countDown = time;
+                    if (countDown < time)
+                    {
+                        countDown = time;
+                    }
+                    else
+                    {
+                        countDown += 5;
+                    }
                 });
 
                 socket.on('nameMatch', function(match) {
