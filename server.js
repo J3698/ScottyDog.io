@@ -296,8 +296,12 @@ function isCollide(){
   }
 }
 
-//var port = process.env.PORT;
-//if (port == null || port == "") {
+var port = process.env.PORT;
+var ip = process.env.IP;
+if (port == null || port == "") {
   var port = 8080;
-//}
-http.listen(port, "localhost");
+}
+if (ip == null || ip == "") {
+  var ip = "localhost";
+}
+http.listen(port, ip);
