@@ -298,10 +298,12 @@ function isCollide(){
 
 var port = process.env.PORT;
 var ip = process.env.IP;
+/*
 if (port == null || port == "") {
   var port = 8080;
 }
 if (ip == null || ip == "") {
   var ip = "localhost";
 }
+*/
 http.listen(port, ip);
