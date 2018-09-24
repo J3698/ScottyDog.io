@@ -1,0 +1,18 @@
+For devs:
+
+To make a change live on scotty.pillai.io:
+
+1) Have a Github account
+2) Have me add you as a Github collaborator
+3) Have a Heroku account
+4) Have me add you as a Heroku collaborator
+5) Run in terminal to see changes:
+    git status
+6) Run in terminal to add changes:
+    git add file.ext file2.ext            (change the files to the files you changed)
+7) Run in terminal to commit changes:
+    git commit -m "Did x, y and z"        (change the message in quotes)
+8) Run in terminal to push changes to Github:
+    git push
+9) Run in terminal to push changes to Heroku:
+    git push heroku master
